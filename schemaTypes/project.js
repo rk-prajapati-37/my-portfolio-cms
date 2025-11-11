@@ -1,0 +1,25 @@
+export default {
+  name: "project",
+  title: "Projects",
+  type: "document",
+  fields: [
+    { name: "title", title: "Project Title", type: "string", validation: Rule => Rule.required() },
+    { name: "slug", title: "Slug", type: "slug", options: { source: "title" } },
+    { name: "category", title: "Category", type: "array", of: [{ type: "string" }], description: "One or multiple categories" },
+    { name: "description", title: "Project Description", type: "text" },
+    { name: "details", title: "Detailed Info", type: "blockContent" },
+    { name: "date", title: "Date", type: "date" },
+    { name: "client", title: "Client", type: "string" },
+    { name: "tools", title: "Tools", type: "array", of: [{ type: "string" }] },
+    { name: "plugins", title: "Plugins", type: "array", of: [{ type: "string" }] },
+    { name: "github", title: "GitHub Link", type: "url" },
+    { name: "demo", title: "Live Demo Link", type: "url" },
+    {
+      name: "images",
+      title: "Project Images",
+      type: "array",
+      of: [{ type: "image", options: { hotspot: true } }],
+    },
+    { name: "video", title: "Project Video (optional)", type: "url" },
+  ],
+};
