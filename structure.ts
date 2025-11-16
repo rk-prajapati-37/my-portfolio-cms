@@ -4,7 +4,7 @@ export const structure = (S: StructureBuilder): ListItemBuilder =>
   S.list()
     .title('Content')
     .items([
-      S.documentTypeListItem('projects').title('Projects'),
+      S.documentTypeListItem('project').title('Projects'),
       S.documentTypeListItem('blog').title('Blogs'),
       S.documentTypeListItem('skill').title('Skills'),
       S.documentTypeListItem('experience').title('Experience'),
