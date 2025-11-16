@@ -1,6 +1,6 @@
-import {StructureBuilder} from 'sanity/structure'
+import {ListItemBuilder, StructureBuilder} from 'sanity/structure'
 
-export const structure = (S: StructureBuilder) =>
+export const structure = (S: StructureBuilder): ListItemBuilder =>
   S.list()
     .title('Content')
     .items([
