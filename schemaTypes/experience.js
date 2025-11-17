@@ -5,6 +5,7 @@ export default {
   fields: [
     { name: 'position', title: 'Position/Title', type: 'string' },
     { name: 'company', title: 'Company', type: 'string' },
+    { name: 'companyUrl', title: 'Company Website', type: 'url' },
     { name: 'location', title: 'Location', type: 'string' },
     { name: 'startDate', title: 'Start Date', type: 'date' },
     { name: 'endDate', title: 'End Date', type: 'date' },
