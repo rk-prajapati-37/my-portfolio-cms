@@ -11,6 +11,7 @@ export const structure = (S: StructureBuilder): ListItemBuilder =>
       S.documentTypeListItem('skill').title('Skills'),
       S.documentTypeListItem('experience').title('Experience'),
       S.documentTypeListItem('education').title('Education'),
+      S.documentTypeListItem('certificate').title('Certificates'),
       S.documentTypeListItem('testimonial').title('Testimonials'),
       S.documentTypeListItem('contact').title('Contact Messages'),
     ])
