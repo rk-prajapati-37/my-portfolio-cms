@@ -16,6 +16,12 @@ export default {
       options: { source: "title", maxLength: 96 },
     },
     { name: "description", title: "Project Description", type: "text" },
+    {
+      name: "details",
+      title: "Detailed Info",
+      description: "Use rich text here (headings, paragraphs, lists).",
+      type: "blockContent",
+    },
     { name: "clientName", title: "Client Name", type: "string" },
     { name: "date", title: "Project Date", type: "string" },
     {
