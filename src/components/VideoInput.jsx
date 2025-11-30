@@ -60,13 +60,15 @@ function VideoInput(props) {
   const sendPatch = (url) => {
     try {
       if (typeof onChange === 'function') {
+        if (readOnly) {
+          if (process.env.NODE_ENV !== 'production') console.info('VideoInput: readOnly - skipping sendPatch')
+          return
+        }
+        // If props.path exists, use it as the base path to avoid Studio needing to call prefixAll
+        const basePath = Array.isArray(props.path) ? props.path : props.path != null ? [props.path] : []
         const patches = url
           ? [{ type: 'set', path: basePath, value: url }]
           : [{ type: 'unset', path: basePath }]
-
-        // Freeze patches and normalize the `path` property strictly to arrays so Studio can't receive non-iterable values
-        // If props.path exists, use it as the base path to avoid Studio needing to call prefixAll
-        const basePath = Array.isArray(props.path) ? props.path : props.path != null ? [props.path] : []
 
         const preparedPatches = patches.map((p) => {
           const normalizedPath = Array.isArray(p.path)
@@ -77,19 +79,29 @@ function VideoInput(props) {
           return Object.freeze({ ...p, path: Object.freeze(normalizedPath) })
         })
 
+        // Ensure every patch's path is an actual array (safety-net). Replace any non-array path.
+        const safePreparedPatches = preparedPatches.map((p) => ({ ...p, path: Array.isArray(p.path) ? p.path : p.path != null ? [p.path] : [] }))
+
         // Debugging: show what we will send to Studio's onChange
         if (process.env.NODE_ENV !== 'production') {
-          console.info('VideoInput prepared patches:', JSON.parse(JSON.stringify(patches)))
-          patches.forEach((p, i) => {
-            console.info(`VideoInput patch[${i}] path type:`, p.path, 'isArray:', Array.isArray(p.path), 'typeof:', typeof p.path)
+          console.info('VideoInput prepared patches:', JSON.parse(JSON.stringify(safePreparedPatches)))
+          safePreparedPatches.forEach((p, i) => {
+            console.info(
+              `VideoInput preparedPatches[${i}] path type:`,
+              p.path,
+              'isArray:',
+              Array.isArray(p.path),
+              'typeof:',
+              typeof p.path,
+            )
           })
         }
 
         const fakePatchEvent = {
-          patches: preparedPatches,
+          patches: safePreparedPatches,
           // Studio will call prefixAll to add the field path; implement prefixAll to return a new patch event-like object
           prefixAll(prefix) {
-            const prefixed = preparedPatches.map((p) => {
+            const prefixed = safePreparedPatches.map((p) => {
               // Normalize path to an array. If path is undefined/null, treat as []
               const originalPath = Array.isArray(p.path)
                 ? p.path
@@ -121,7 +133,53 @@ function VideoInput(props) {
           },
         }
 
-        onChange(fakePatchEvent)
+        // Prefer to use Studio's PatchEvent if available (via `part:@sanity/form-builder/patch-event`).
+        // Use dynamic import to avoid Vite build issues during SSR; if import fails, fall back to fakePatchEvent.
+        ;(async () => {
+          try {
+            // Import using a variable so that Vite does not statically analyze the `'part:@sanity/...'` module id.
+            const moduleId = 'part:@sanity/form-builder/patch-event'
+            const patchModule = await import(/* @vite-ignore */ moduleId)
+            const PatchEventModule = patchModule?.default ? patchModule.default : patchModule
+            if (PatchEventModule && typeof PatchEventModule.from === 'function') {
+              // Build array of simple patch shapes for PatchEvent
+              const patchShapes = preparedPatches.map((pp) => ({ type: pp.type, path: pp.path, value: pp.value }))
+              onChange(PatchEventModule.from(patchShapes))
+              return
+            }
+          } catch (e) {
+            // dynamic import may fail (local runtime), we'll fall back to fakePatchEvent
+            if (process.env.NODE_ENV !== 'production') {
+              console.warn('VideoInput: could not import PatchEvent, falling back to shim; error:', e.message)
+            }
+          }
+
+          try {
+            // If no PatchEvent module is available, create a local compatible shim that mirrors PatchEvent API.
+            class LocalPatchEvent {
+              constructor(patches) {
+                this.patches = patches
+              }
+              prefixAll(prefix) {
+                const prefixArray = Array.isArray(prefix) ? prefix : prefix != null ? [prefix] : []
+                const prefixed = this.patches.map((p) => {
+                  const originalPath = Array.isArray(p.path) ? p.path : p.path != null ? [p.path] : []
+                  const newPath = originalPath.length === 0 ? [...basePath, ...prefixArray] : [...prefixArray, ...originalPath]
+                  return { ...p, path: newPath }
+                })
+                return new LocalPatchEvent(prefixed)
+              }
+              static from(patches) { return new LocalPatchEvent(patches) }
+            }
+
+            // Use local shim to construct a patch event and send
+            const ev = LocalPatchEvent.from(safePreparedPatches.map((pp) => ({ type: pp.type, path: pp.path, value: pp.value })))
+            onChange(ev)
+          } catch (err2) {
+            // This is typically where Studio may throw; we log for diagnostics
+            console.error('VideoInput fallback onChange error', err2)
+          }
+        })()
       }
     } catch (err) {
       console.error('VideoInput sendPatch error', err)
@@ -135,8 +193,13 @@ function VideoInput(props) {
     sendPatch(inputValue)
   }
 
-  const provider = detectProvider(value)
-  const ytId = provider === 'youtube' && value ? extractYouTubeId(value) : null
+  // The provider and ytId should be derived from the *current* input value (user-typed) or the persisted value
+  const currentUrl = inputValue || value
+  const provider = detectProvider(currentUrl)
+  const ytId = provider === 'youtube' && currentUrl ? extractYouTubeId(currentUrl) : null
+
+  // For YouTube, compute the thumbnail URL (hqdefault is typically a good quality preview)
+  const previewImg = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : null
 
   return (
     <div style={{ marginBottom: '14px' }}>
@@ -164,9 +227,17 @@ function VideoInput(props) {
             Clear
           </button>
         </div>
-        {(inputValue || value) && (
+        {(currentUrl) && (
           <div style={{ maxWidth: '100%', aspectRatio: '16/9' }}>
-            <ReactPlayer url={inputValue || value} controls width="100%" height="100%" />
+            <ReactPlayer
+              url={currentUrl}
+              controls
+              width="100%"
+              height="100%"
+              // If we have a YouTube ID we show the thumbnail with the `light` prop.
+              // For other providers or direct mp4, `light` can be false — they may not support remote thumbnails.
+              light={previewImg || false}
+            />
           </div>
         )}
       </div>
