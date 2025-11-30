@@ -1,48 +1,172 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import ReactPlayer from 'react-player'
+// Note: Avoid importing `part:@sanity/form-builder/patch-event` directly because Vite build may fail to resolve it.
 // We avoid importing PatchEvent from the studio 'part' system to avoid build-resolution issues
 // Avoid importing studio internal FormField to prevent Vite build resolving issues
 
 function VideoInput(props) {
   // Support `type` or `schemaType`, and guard against undefined.
   const { value, onChange, readOnly } = props
+  if (process.env.NODE_ENV !== 'production') {
+    console.info('VideoInput props:', { value, readOnly })
+    try { console.info('VideoInput props.path:', props.path) } catch(e) {}
+  }
+  const [inputValue, setInputValue] = useState(value || '')
+  const debounceRef = useRef(null)
+
+  useEffect(() => {
+    setInputValue(value || '')
+  }, [value])
   const fieldType = props.type ?? props.schemaType ?? {}
   const label = fieldType?.title ?? 'Demo Video (optional)'
   const description = fieldType?.description ?? ''
 
+  const detectProvider = (url) => {
+    try {
+      const u = new URL(url)
+      const host = u.hostname.replace(/^www\./, '')
+      if (host.includes('youtube.com') || host.includes('youtu.be')) return 'youtube'
+      if (host.includes('vimeo.com')) return 'vimeo'
+      if (host.includes('facebook.com') || host.includes('fb.watch')) return 'facebook'
+      if (host.includes('tiktok.com')) return 'tiktok'
+      if (host.includes('dailymotion.com')) return 'dailymotion'
+      if (/\.(mp4|webm|ogg|mov)$/i.test(url)) return 'direct'
+      return null
+    } catch (e) {
+      return null
+    }
+  }
+
+  const extractYouTubeId = (url) => {
+    try {
+      const u = new URL(url)
+      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1)
+      if (u.hostname.includes('youtube.com')) return u.searchParams.get('v')
+    } catch (e) {}
+  }
+
   const handleChange = (ev) => {
     const url = ev.target.value
-    // Use Sanity's patch-like shape for the onChange event
     try {
-      if (typeof onChange === 'function') {
-        if (url) {
-          onChange({ patches: [{ type: 'set', path: [], value: url }] })
-        } else {
-          onChange({ patches: [{ type: 'unset', path: [] }] })
-        }
-      }
+      setInputValue(url)
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      debounceRef.current = setTimeout(() => sendPatch(url), 450)
     } catch (err) {
       console.error('VideoInput onChange error', err)
     }
   }
+
+  const sendPatch = (url) => {
+    try {
+      if (typeof onChange === 'function') {
+        const patches = url
+          ? [{ type: 'set', path: basePath, value: url }]
+          : [{ type: 'unset', path: basePath }]
+
+        // Freeze patches and normalize the `path` property strictly to arrays so Studio can't receive non-iterable values
+        // If props.path exists, use it as the base path to avoid Studio needing to call prefixAll
+        const basePath = Array.isArray(props.path) ? props.path : props.path != null ? [props.path] : []
+
+        const preparedPatches = patches.map((p) => {
+          const normalizedPath = Array.isArray(p.path)
+            ? p.path
+            : p.path != null
+            ? [p.path]
+            : []
+          return Object.freeze({ ...p, path: Object.freeze(normalizedPath) })
+        })
+
+        // Debugging: show what we will send to Studio's onChange
+        if (process.env.NODE_ENV !== 'production') {
+          console.info('VideoInput prepared patches:', JSON.parse(JSON.stringify(patches)))
+          patches.forEach((p, i) => {
+            console.info(`VideoInput patch[${i}] path type:`, p.path, 'isArray:', Array.isArray(p.path), 'typeof:', typeof p.path)
+          })
+        }
+
+        const fakePatchEvent = {
+          patches: preparedPatches,
+          // Studio will call prefixAll to add the field path; implement prefixAll to return a new patch event-like object
+          prefixAll(prefix) {
+            const prefixed = preparedPatches.map((p) => {
+              // Normalize path to an array. If path is undefined/null, treat as []
+              const originalPath = Array.isArray(p.path)
+                ? p.path
+                : p.path != null
+                ? [p.path]
+                : []
+              const prefixArray = Array.isArray(prefix) ? prefix : prefix != null ? [prefix] : []
+              // If basePath exists and originalPath is empty, use basePath so that patch paths are explicit
+              const newPath = originalPath.length === 0 ? [...basePath, ...prefixArray] : [...prefixArray, ...originalPath]
+              return {
+                ...p,
+                path: newPath,
+              }
+            })
+
+            const result = {
+              patches: Object.freeze(prefixed.map((pp) => Object.freeze({ ...pp, path: Object.freeze(pp.path) }))),
+              prefixAll() {
+                // The Studio may call prefixAll again; ensure returned object stays stable and has patches as arrays
+                return result
+              },
+            }
+
+            if (process.env.NODE_ENV !== 'production') {
+              console.info('VideoInput prefixAll called:', prefix, 'result.patches:', JSON.parse(JSON.stringify(result.patches)))
+            }
+
+            return result
+          },
+        }
+
+        onChange(fakePatchEvent)
+      }
+    } catch (err) {
+      console.error('VideoInput sendPatch error', err)
+    }
+  }
+  const handleBlur = () => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+      debounceRef.current = null
+    }
+    sendPatch(inputValue)
+  }
+
+  const provider = detectProvider(value)
+  const ytId = provider === 'youtube' && value ? extractYouTubeId(value) : null
 
   return (
     <div style={{ marginBottom: '14px' }}>
       <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>{label}</label>
       {description && <div style={{ marginBottom: '8px', color: '#666' }}>{description}</div>}
       <div>
-        <input
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
           type="url"
-          value={value || ''}
+          value={inputValue || ''}
           onChange={handleChange}
+          onPaste={(ev) => setTimeout(() => handleChange({ target: { value: ev.clipboardData.getData('text') } }), 0)}
           placeholder={description}
           style={{ width: '100%', padding: '8px', marginBottom: '12px' }}
           readOnly={readOnly}
+          onBlur={handleBlur}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); sendPatch(inputValue); } }}
         />
-        {value && (
+          <button
+            type="button"
+            onClick={() => sendPatch('')}
+            style={{ padding: '8px 10px' }}
+            title="Clear video"
+          >
+            Clear
+          </button>
+        </div>
+        {(inputValue || value) && (
           <div style={{ maxWidth: '100%', aspectRatio: '16/9' }}>
-            <ReactPlayer url={value} controls width="100%" height="100%" />
+            <ReactPlayer url={inputValue || value} controls width="100%" height="100%" />
           </div>
         )}
       </div>
