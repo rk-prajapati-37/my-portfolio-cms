@@ -36,7 +36,7 @@ function VideoInput(props) {
           type="url"
           value={value || ''}
           onChange={handleChange}
-          placeholder={type.description}
+          placeholder={description}
           style={{ width: '100%', padding: '8px', marginBottom: '12px' }}
           readOnly={readOnly}
         />
