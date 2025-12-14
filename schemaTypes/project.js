@@ -1,5 +1,3 @@
-import VideoInput from '../src/components/VideoInput'
-
 export default {
   name: "project",
   title: "Projects",
@@ -23,39 +21,51 @@ export default {
       of: [{ type: "image", options: { hotspot: true } }],
     },
     {
-      name: "video",
-      title: "Project Video (optional)",
-      type: "url",
-      description:
-        "Paste a YouTube/Vimeo/Facebook/TikTok/Dailymotion share link OR a direct mp4/webm URL (public). Private links may not embed.",
-      validation: Rule => Rule.custom(url => {
-        if (!url) return true
-        try {
-          const allowedHosts = ['youtube.com', 'youtu.be', 'vimeo.com', 'facebook.com', 'fb.watch', 'tiktok.com', 'dailymotion.com']
-          const parsed = new URL(url)
-          const host = parsed.hostname.replace(/^www\./, '')
-          const isAllowedHost = allowedHosts.some(h => host.includes(h))
-          const isDirectVideo = /\.(mp4|webm|ogg|mov)$/i.test(url)
-          return isAllowedHost || isDirectVideo ? true : 'Allowed: YouTube, Vimeo, Facebook, TikTok, Dailymotion or direct MP4/WebM links'
-        } catch (e) {
-          return 'Enter a valid URL'
+      name: "socialLinks",
+      title: "Social Media & External Links",
+      type: "array",
+      of: [
         {
-          name: "video",
-          title: "Project Video (optional)",
-          type: "url",
-          components: { input: VideoInput },
-          description: "Paste a YouTube/Vimeo/Facebook/TikTok/Dailymotion share link OR a direct mp4/webm URL (public). Private links may not embed.",
-          validation: Rule => Rule.custom(url => {
-            if (!url) return true
-            try {
-              const allowedHosts = ['youtube.com', 'youtu.be', 'vimeo.com', 'facebook.com', 'fb.watch', 'tiktok.com', 'dailymotion.com']
-              const parsed = new URL(url)
-              const host = parsed.hostname.replace(/^www\./, '')
-              const isAllowedHost = allowedHosts.some(h => host.includes(h))
-              const isDirectVideo = /\.(mp4|webm|ogg|mov)$/i.test(url)
-              return isAllowedHost || isDirectVideo ? true : 'Allowed: YouTube, Vimeo, Facebook, TikTok, Dailymotion or direct MP4/WebM links'
-            } catch (e) {
-              return 'Enter a valid URL'
-            }
-          })
+          type: "object",
+          fields: [
+            {
+              name: "platform",
+              title: "Platform",
+              type: "string",
+              options: {
+                list: [
+                  { title: "YouTube", value: "youtube" },
+                  { title: "Facebook", value: "facebook" },
+                  { title: "LinkedIn", value: "linkedin" },
+                  { title: "Twitter", value: "twitter" },
+                  { title: "Instagram", value: "instagram" },
+                  { title: "TikTok", value: "tiktok" },
+                  { title: "Other", value: "other" },
+                ],
+              },
+            },
+            {
+              name: "url",
+              title: "URL",
+              type: "url",
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+          preview: {
+            select: {
+              platform: "platform",
+              url: "url",
+            },
+            prepare(selection) {
+              const { platform, url } = selection
+              return {
+                title: platform || "Link",
+                subtitle: url,
+              }
+            },
+          },
         },
+      ],
+    },
+  ],
+};
