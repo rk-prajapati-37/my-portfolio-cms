@@ -17,7 +17,7 @@ export const sanityClient = createClient({
   projectId: 'i8n8hd39', // Apne portfolio CMS ka project ID
   dataset: 'production',
   useCdn: true,
-  apiVersion: '2023-05-03',
+  apiVersion: '2023-05-03', // ✅ Correct API version
 })
 
 // ============================================
@@ -404,7 +404,11 @@ export const BLOG_QUERY = `
   }
 `
 
-// Alternative: Fetch all blogs
+// ============================================
+// CORRECTED BLOG QUERIES - Frontend me ye use karo
+// ============================================
+
+// ✅ CORRECT: Fetch all blogs (ye syntax use karo)
 export const ALL_BLOGS_QUERY = `
   *[_type == "blog"] | order(date desc) {
     _id,
@@ -414,7 +418,43 @@ export const ALL_BLOGS_QUERY = `
     excerpt,
     category[],
     coverImage {
-      asset -> { url },
+      asset -> {
+        url,
+        metadata {
+          dimensions {
+            height,
+            width
+          }
+        }
+      },
+      hotspot,
+      crop
+    },
+    date,
+    tags[]
+  }
+`
+
+// ✅ CORRECT: Fetch single blog
+export const BLOG_QUERY = `
+  *[_type == "blog" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    author,
+    excerpt,
+    category[],
+    details,
+    coverImage {
+      asset -> {
+        url,
+        metadata {
+          dimensions {
+            height,
+            width
+          }
+        }
+      },
       hotspot,
       crop
     },
