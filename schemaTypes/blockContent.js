@@ -29,6 +29,35 @@ export default {
         ]
       }
     },
-    { type: 'image', options: { hotspot: true } }
+    {
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        {
+          name: 'size',
+          title: 'Image Size',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Small (300px)', value: 'small' },
+              { title: 'Medium (500px)', value: 'medium' },
+              { title: 'Large (800px)', value: 'large' },
+              { title: 'Full Width', value: 'full' }
+            ],
+            layout: 'radio'
+          }
+        },
+        {
+          name: 'caption',
+          title: 'Caption',
+          type: 'string'
+        },
+        {
+          name: 'alt',
+          title: 'Alt Text',
+          type: 'string'
+        }
+      ]
+    }
   ]
 }

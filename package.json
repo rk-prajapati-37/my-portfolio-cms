@@ -15,15 +15,12 @@
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^4.19.0",
+    "@sanity/vision": "^4.21.1",
     "react": "^19.1",
     "react-dom": "^19.1",
-    "sanity": "^4.19.0",
-    "styled-components": "^6.1.18",
-    "react-player": "^3.0.0"
-  },
-  "devDependencies": {
-    "prop-types": "^15.8.1"
+    "react-player": "^3.0.0",
+    "sanity": "^4.21.1",
+    "styled-components": "^6.1.18"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",

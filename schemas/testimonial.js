@@ -15,7 +15,12 @@ export default {
     },
     {
       name: 'company',
-      title: 'Company / Role',
+      title: 'Company',
+      type: 'string',
+    },
+    {
+      name: 'role',
+      title: 'Role',
       type: 'string',
     },
     {
