@@ -15,6 +15,7 @@ export default {
       type: "slug",
       options: { source: "title", maxLength: 96 },
     },
+
     { name: "description", title: "Project Description", type: "text" },
     {
       name: "details",
@@ -97,5 +98,10 @@ export default {
         },
       ],
     },
+
+    // 🔥 SEO FIELDS
+    { name: "seoTitle", title: "SEO Title", type: "string", description: "Meta title for Google" },
+    { name: "seoDescription", title: "SEO Description", type: "text", description: "150–160 characters" },
+    { name: "seoKeywords", title: "SEO Keywords", type: "array", of: [{ type: "string" }] },
   ],
 };
