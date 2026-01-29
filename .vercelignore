@@ -1,16 +1,34 @@
-# Sanity CMS files (not needed for frontend build)
+# Vercel ignore: exclude docs, Sanity Studio and heavy files from frontend build
+
+# Sanity Studio / Studio config
 sanity.config.ts
 sanity.cli.ts
+.sanity/
 schemas/
 schemaTypes/
 structure.ts
 
-# Documentation (not needed for deployment)
+# Documentation & large reference files (keep in repo, but not needed for deployment)
 *.md
+README_*.md
+SOCIAL_*
+SOCIAL_POSTS_*
 DOCUMENTATION_INDEX.txt
 COMPLETION_SUMMARY.txt
 START_HERE.txt
 FINAL_SUMMARY.txt
 QUICK_REFERENCE.txt
-SOCIAL_POSTS_AT_A_GLANCE.md
-SOCIAL_POSTS_START_HERE.md
+
+# Build artifacts / caches
+.next/
+dist/
+out/
+node_modules/
+
+# Editor / OS
+.vscode/
+.DS_Store
+
+# Environment
+.env
+.env.*
