@@ -1,0 +1,26 @@
+{
+  "..\\node_modules\\@sanity\\client\\dist\\index.browser.js -> ./_chunks-es/stegaEncodeSourceMap.js": {
+    "id": 6189,
+    "files": [
+      "static/chunks/570.1d9ddff433d7b868.js"
+    ]
+  },
+  "..\\node_modules\\@sanity\\client\\dist\\index.browser.js -> @sanity/eventsource": {
+    "id": 5723,
+    "files": [
+      "static/chunks/723.5ea8c291616d1621.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 1806,
+    "files": [
+      "static/chunks/806.a7e9447414a53493.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 8123,
+    "files": [
+      "static/chunks/123.f3d27f38429d3ab5.js"
+    ]
+  }
+}

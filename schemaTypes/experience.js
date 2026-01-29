@@ -13,5 +13,10 @@ export default {
     { name: 'description', title: 'Description', type: 'array', of: [{ type: 'block' }] },
     { name: 'logo', title: 'Company Logo', type: 'image', options: { hotspot: true } },
     { name: 'order', title: 'Order', type: 'number', description: 'Lower numbers appear first' },
+
+    // 🔥 SEO FIELDS
+    { name: 'seoTitle', title: 'SEO Title', type: 'string', description: 'Meta title for Google' },
+    { name: 'seoDescription', title: 'SEO Description', type: 'text', description: '150–160 characters' },
+    { name: 'seoKeywords', title: 'SEO Keywords', type: 'array', of: [{ type: 'string' }] },
   ],
 }

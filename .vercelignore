@@ -1,0 +1,16 @@
+# Sanity CMS files (not needed for frontend build)
+sanity.config.ts
+sanity.cli.ts
+schemas/
+schemaTypes/
+structure.ts
+
+# Documentation (not needed for deployment)
+*.md
+DOCUMENTATION_INDEX.txt
+COMPLETION_SUMMARY.txt
+START_HERE.txt
+FINAL_SUMMARY.txt
+QUICK_REFERENCE.txt
+SOCIAL_POSTS_AT_A_GLANCE.md
+SOCIAL_POSTS_START_HERE.md

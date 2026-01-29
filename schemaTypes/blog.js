@@ -23,5 +23,10 @@ export default {
     { name: "coverImage", title: "Cover Image", type: "image", options: { hotspot: true } },
     { name: "date", title: "Published Date", type: "datetime" },
     { name: "tags", title: "Tags", type: "array", of: [{ type: "string" }] },
+
+    // 🔥 SEO FIELDS
+    { name: "seoTitle", title: "SEO Title", type: "string", description: "Meta title for Google" },
+    { name: "seoDescription", title: "SEO Description", type: "text", description: "150–160 characters" },
+    { name: "seoKeywords", title: "SEO Keywords", type: "array", of: [{ type: "string" }] },
   ],
 };

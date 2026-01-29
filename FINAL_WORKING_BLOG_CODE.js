@@ -53,7 +53,13 @@ export const BLOG_QUERY = `
     author,
     excerpt,
     category[],
-    details,
+    details[]{
+      ...,
+      _type == "image" => {
+        ...,
+        asset->
+      }
+    },
     coverImage {
       asset -> {
         url,

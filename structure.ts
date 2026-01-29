@@ -14,4 +14,9 @@ export const structure = (S: StructureBuilder): ListItemBuilder =>
       S.documentTypeListItem('certificate').title('Certificates'),
       S.documentTypeListItem('testimonial').title('Testimonials'),
       S.documentTypeListItem('contact').title('Contact Messages'),
+      S.documentTypeListItem('service').title('Services'),
+      S.documentTypeListItem('stats').title('Stats'),
+      S.divider(),
+      S.documentTypeListItem('socialMedia').title('Social Media Profiles'),
+      S.documentTypeListItem('socialPost').title('Social Media Posts'),
     ])
