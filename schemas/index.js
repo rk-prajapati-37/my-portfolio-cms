@@ -9,5 +9,7 @@ import testimonial from './testimonial'
 import contact from './contact'
 import service from "./service";
 import stats from './stats';
+import socialMedia from './socialMedia';
+import socialPost from './socialPost';
 
-export const schemaTypes = [ service, project, blog, skill, experience, education, certificate, testimonial, contact, blockContent, stats]
+export const schemaTypes = [ service, project, blog, skill, experience, education, certificate, testimonial, contact, blockContent, stats, socialMedia, socialPost]
