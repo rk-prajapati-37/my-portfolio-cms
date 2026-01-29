@@ -6,6 +6,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
+    "dev:studio": "sanity start --port 3333",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -22,7 +23,8 @@
     "react-dom": "^19.2.3",
     "react-player": "^3.0.0",
     "sanity": "^5.7.0",
-    "styled-components": "^6.1.18"
+    "styled-components": "^6.1.18",
+    "react-icons": "^4.10.1"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
