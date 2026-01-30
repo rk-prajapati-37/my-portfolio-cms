@@ -1,7 +1,7 @@
 import {ListItemBuilder, StructureBuilder} from 'sanity/structure'
 
 // Redeploy trigger: update timestamp when forcing a Vercel rebuild
-// redeploy-timestamp: 2025-11-17T00:00:00Z
+// redeploy-timestamp: 2026-01-30T11:05:00Z
 export const structure = (S: StructureBuilder): ListItemBuilder =>
   S.list()
     .title('Content')
