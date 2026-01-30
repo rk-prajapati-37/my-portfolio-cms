@@ -5,7 +5,9 @@
   "main": "package.json",
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"npm run dev:next\" \"npm run dev:studio\"",
+    "dev:next": "next dev",
+    "dev:all": "concurrently \"npm run dev:next\" \"npm run dev:studio\"",
     "dev:studio": "sanity start --port 3333",
     "build": "next build",
     "start": "next start",
@@ -31,7 +33,8 @@
     "@types/react": "^19.1",
     "eslint": "^9.28",
     "prettier": "^3.5",
-    "typescript": "^5.8"
+    "typescript": "^5.8",
+    "concurrently": "^8.2.0"
   },
   "prettier": {
     "semi": false,
