@@ -1,6 +1,6 @@
 {
-  "/": "pages/index.html",
   "/_document": "pages/_document.js",
+  "/": "pages/index.html",
   "/social-media-example": "pages/social-media-example.html",
   "/social-hub": "pages/social-hub.html",
   "/_error": "pages/_error.js",
