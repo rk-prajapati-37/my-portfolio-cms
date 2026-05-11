@@ -9,12 +9,24 @@ export default {
       type: 'string',
     },
     {
-      name: 'level',
-      title: 'Proficiency Level',
+      name: 'category',
+      title: 'Category',
       type: 'string',
       options: {
-        list: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
-      },
+        list: [
+          'Frontend Technologies',
+          'CMS & Platforms',
+          'Design & Tools',
+          'Git & GitHub',
+          'Additional Skills'
+        ]
+      }
+    },
+    {
+      name: 'level',
+      title: 'Proficiency Level (0-100)',
+      type: 'number',
+      validation: (Rule) => Rule.required().min(0).max(100),
     },
     {
       name: 'icon',

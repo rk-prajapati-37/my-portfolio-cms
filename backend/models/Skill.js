@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const SkillSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  level: { type: String, enum: ["Beginner", "Intermediate", "Advanced", "Expert"], default: "Intermediate" },
+  category: { type: String, required: true },
+  level: { type: Number, min: 0, max: 100, required: true },
   percent: { type: Number, min: 0, max: 100, default: 60 },
 });
 
