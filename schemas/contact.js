@@ -6,6 +6,8 @@ export default {
     { name: "name", title: "Name", type: "string" },
     { name: "email", title: "Email", type: "string" },
     { name: "mobile", title: "Mobile", type: "string" },
+    { name: "projectType", title: "What they need", type: "string" },
+    { name: "budget", title: "Budget", type: "string" },
     { name: "message", title: "Message", type: "text" },
     {
       name: "createdAt",
