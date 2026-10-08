@@ -46,6 +46,30 @@ export default {
       options: { hotspot: true },
     },
     {
+      name: "pages",
+      title: "Website Preview (pages)",
+      description:
+        "One entry per page of the website (Home, About, Menu...). Upload a FULL-PAGE (tall) screenshot for Desktop and for Mobile. On the website visitors can switch Desktop/Mobile and hover to scroll through the page.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "previewPage",
+          title: "Page",
+          fields: [
+            { name: "pageName", title: "Page name", type: "string", description: "e.g. Home, About, Menu" },
+            { name: "description", title: "Short note (optional)", type: "text", rows: 2 },
+            { name: "desktopImage", title: "Desktop screenshot (full page)", type: "image" },
+            { name: "mobileImage", title: "Mobile screenshot (full page)", type: "image" },
+          ],
+          preview: {
+            select: { title: "pageName", media: "desktopImage", subtitle: "description" },
+            prepare: ({ title, media, subtitle }) => ({ title: title || "Page", media, subtitle }),
+          },
+        },
+      ],
+    },
+    {
       name: "extraImages",
       title: "Extra Images",
       type: "array",
@@ -98,6 +122,10 @@ export default {
         },
       ],
     },
+
+    // Auto-capture info (filled by `npm run add-project`)
+    { name: "capturedAt", title: "Screenshot captured on", type: "string", readOnly: true },
+    { name: "captureSource", title: "Captured from URL", type: "url", readOnly: true },
 
     // 🔥 SEO FIELDS
     { name: "seoTitle", title: "SEO Title", type: "string", description: "Meta title for Google" },
