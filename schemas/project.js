@@ -71,9 +71,11 @@ export default {
     },
     {
       name: "extraImages",
-      title: "Extra Images",
+      title: "Extra Images (old - use Website Preview above)",
+      description: "Old gallery. Images here still show as cards on the website, but new screenshots should go in Website Preview (pages). This field is hidden when empty.",
       type: "array",
       of: [{ type: "image" }],
+      hidden: ({ value }) => !value || value.length === 0,
     },
     {
       name: "socialLinks",
