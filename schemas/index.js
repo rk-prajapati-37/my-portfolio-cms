@@ -10,6 +10,6 @@ import contact from './contact'
 import service from "./service";
 import stats from './stats';
 import socialMedia from './socialMedia';
-import socialPost from './socialPost';
+import client from './client';
 
-export const schemaTypes = [ service, project, blog, skill, experience, education, certificate, testimonial, contact, blockContent, stats, socialMedia, socialPost]
+export const schemaTypes = [ service, project, blog, skill, experience, education, certificate, testimonial, contact, blockContent, stats, socialMedia, client]

@@ -54,6 +54,19 @@ export default {
     },
 
     {
+      name: "popular",
+      title: "Mark as Most Popular",
+      type: "boolean",
+      description: "Highlights this package on the Services page. Tick only one.",
+      initialValue: false,
+    },
+    {
+      name: "order",
+      title: "Display order",
+      type: "number",
+      description: "Lower numbers appear first.",
+    },
+    {
       name: "whatsappText",
       title: "WhatsApp Auto Message",
       type: "string",
