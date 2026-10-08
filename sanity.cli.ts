@@ -11,6 +11,6 @@ export default defineCliConfig({
      * Learn more at https://www.sanity.io/docs/cli#auto-updates
      */
     autoUpdates: true,
-    appId: 'my-portfolio-cms',
+    appId: 'y8lkcgwmxnmc8sbc6k9d9ain',
   }
 })
