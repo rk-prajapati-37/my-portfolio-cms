@@ -24,7 +24,13 @@ export default {
       type: "blockContent",
     },
     { name: "clientName", title: "Client Name", type: "string" },
-    { name: "date", title: "Project Date", type: "string" },
+    {
+      name: "date",
+      title: "Project Date",
+      type: "date",
+      description: "Pick the month the project was built (the day doesn't matter). Projects are shown newest first, oldest last.",
+      options: { dateFormat: "MMM YYYY" },
+    },
     {
       name: "category",
       title: "Project Category",
